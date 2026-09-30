@@ -426,7 +426,7 @@ async function storyImage(r, day){
   // 底部導流
   x.fillRect(64,1790,W-128,4);
   x.font='500 32px "JetBrains Mono","Noto Sans TC",monospace'; x.fillText("想測你的本命水晶？到 IG 搜 @symbiosis_ore",64,1846);
-  x.fillText("→ 看主頁簡介",64,1890);
+  x.fillText("→ 點主頁連結",64,1890);
   // 紫色圓章
   x.save(); x.translate(W-180,1668); x.rotate(-14*Math.PI/180); x.strokeStyle=x.fillStyle=violet;
   x.lineWidth=8; x.beginPath(); x.arc(0,0,104,0,6.283); x.stroke(); x.lineWidth=3; x.beginPath(); x.arc(0,0,86,0,6.283); x.stroke();
@@ -452,7 +452,7 @@ function render(r, animate){
       <p class="small after" ${nx(.15)}>你的星圖屬於<b>「${PERSONA[day]}」</b>型。<span class="pdesc">這類星圖的人，常被形容${PERSONA_DESC[day]}</span></p>
       <div class="after" ${nx(.15)}>
         <h3 class="huge guard-h">${PERSONA[day]}型的守護石</h3>
-        <p class="mono" style="margin:4px 0 10px;font-size:16px">陪「${PERSONA[day]}」型的你，跟本命水晶搭在一起戴</p>
+        <p class="mono" style="margin:4px 0 10px;font-size:16px">守護石是你本命水晶的兩個幫手：一顆跟它站在同一邊，一顆在背後推它一把。和本命水晶搭在一起戴，象徵相輔相成、事半功倍。</p>
         <div class="guards">${r.guards.map(g=>`
           <div class="guard"><div class="photo" data-n="${g[0]}"></div><p><b>${g[0]}</b><br>象徵${g[2]}</p></div>`).join("")}</div>
       </div>
