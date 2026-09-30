@@ -3,6 +3,15 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="description" content="輸入生日，打開你的誕生星圖，看看你的本命水晶是哪一顆。">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://huomoonmoon.github.io/benming-crystal/">
+<meta property="og:title" content="本命水晶｜共生礦 SYMBIO ORE">
+<meta property="og:description" content="輸入生日，打開你的誕生星圖，看看你的本命水晶是哪一顆。">
+<meta property="og:image" content="https://huomoonmoon.github.io/benming-crystal/cover.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
 <title>本命水晶</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@900&family=Noto+Sans+TC:wght@400;700&family=JetBrains+Mono:wght@500&display=swap">
@@ -107,12 +116,6 @@ button:focus-visible,select:focus-visible,input:focus-visible,a:focus-visible{ou
 .ghost-btn{font:500 16px var(--mono);cursor:pointer;padding:12px 18px;background:transparent;color:var(--ink);border:2px solid var(--ink)}
 .ghost-btn:hover{background:var(--paper-2)}
 #shareBox:not([hidden]){display:grid;gap:10px}
-/* 限動專用版面（只在轉圖的複本上套用）：540×960，放大兩倍＝1080×1920 */
-.sheet.story{width:540px;height:960px;overflow:hidden;align-content:space-between;gap:10px;padding:26px 26px 22px}
-.sheet.story .stage{width:66%;justify-self:center}
-.sheet.story .stone-name{font-size:92px}
-.sheet.story .pdesc{display:none}
-.sheet.story .guard .photo{width:72px;height:72px}
 .note{border-top:2px solid var(--ink);padding-top:14px;display:grid;gap:8px;color:var(--ink-2)}
 .note p{margin:0;font-size:16px}
 
@@ -167,7 +170,6 @@ button:focus-visible,select:focus-visible,input:focus-visible,a:focus-visible{ou
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/lunar-javascript@1.7.7/lunar.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 <script>
 // 網站上線後填正式網址（例："https://symbiosis-ore.com/star"）；空白時分享用目前網址
 const SITE_URL = "https://huomoonmoon.github.io/benming-crystal/";
@@ -390,6 +392,52 @@ function stampSvg(){
   return `<svg class="stamp" viewBox="0 0 120 120" aria-hidden="true"><circle cx="60" cy="60" r="54" fill="none" stroke="currentColor" stroke-width="4"/><circle cx="60" cy="60" r="44" fill="none" stroke="currentColor" stroke-width="1.5"/><text x="60" y="71" text-anchor="middle" font-family="Noto Serif TC,serif" font-weight="900" font-size="30" fill="currentColor">共生礦</text></svg>`;
 }
 
+/* ---------- 限動分享圖：1080×1920，程式直接畫（海報風，不拍網頁） ---------- */
+const loadImg = src => new Promise((ok,no)=>{ const i=new Image(); i.onload=()=>ok(i); i.onerror=no; i.src=src; });
+async function storyImage(r, day){
+  const W=1080, H=1920, c=document.createElement("canvas"); c.width=W; c.height=H; const x=c.getContext("2d");
+  const ink="#1C1A1F", violet="#6E3BFF", name=r.main[0], persona=PERSONA[day], guards=r.guards.map(g=>g[0]);
+  await Promise.all([
+    document.fonts.load('900 230px "Noto Serif TC"', name+guards.join("")+"共生礦"),
+    document.fonts.load('700 46px "Noto Sans TC"', `傳統上象徵${r.main[2]}我的星圖是「${persona}」型`),
+    document.fonts.load('500 32px "JetBrains Mono"', "BIRTH STAR MAP @symbiosis_ore")
+  ]).catch(()=>{});
+  const [stone, g1, g2, logo] = await Promise.all([IMG(name), IMG(guards[0]), IMG(guards[1]), "logo-h.png"].map(loadImg));
+  // 紙、顆粒、摺痕
+  x.fillStyle="#EEEAE2"; x.fillRect(0,0,W,H);
+  for(let i=0;i<26000;i++){ x.fillStyle=`rgba(28,26,31,${Math.random()*.07})`; x.fillRect(Math.random()*W,Math.random()*H,2,2); }
+  x.lineWidth=3; x.strokeStyle="rgba(28,26,31,.08)"; x.beginPath(); x.moveTo(0,H*.63); x.lineTo(W,H*.41); x.stroke();
+  x.lineWidth=2; x.strokeStyle="rgba(255,252,245,.6)"; x.beginPath(); x.moveTo(0,H*.63+4); x.lineTo(W,H*.41+4); x.stroke();
+  // 頁首：LOGO＋規格字
+  x.fillStyle=ink; x.fillRect(64,96,W-128,4); x.fillRect(64,200,W-128,4);
+  x.drawImage(logo,64,118,logo.width*64/logo.height,64);
+  x.font='500 30px "JetBrains Mono", monospace'; x.textAlign="right"; x.textBaseline="middle"; x.fillText("BIRTH STAR MAP",W-64,150);
+  x.textAlign="left"; x.textBaseline="alphabetic";
+  x.font='500 34px "JetBrains Mono","Noto Sans TC",monospace'; x.fillText("我的本命水晶",64,290);
+  // 本命石＋兩層紫色殘影
+  const S=820, sx=(W-S)/2+50, sy=290, gh=document.createElement("canvas"); gh.width=gh.height=S;
+  const gx=gh.getContext("2d"); gx.drawImage(stone,0,0,S,S); gx.globalCompositeOperation="source-in"; gx.fillStyle=violet; gx.fillRect(0,0,S,S);
+  x.globalAlpha=.4; x.drawImage(gh,sx-150,sy-70); x.globalAlpha=.85; x.drawImage(gh,sx-75,sy-35); x.globalAlpha=1; x.drawImage(stone,sx,sy,S,S);
+  // 石名（紫色套印偏移）
+  x.font='900 230px "Noto Serif TC", serif'; x.fillStyle=violet; x.fillText(name,76,1339); x.fillStyle=ink; x.fillText(name,64,1330);
+  // 兩句
+  x.font='700 46px "Noto Sans TC", sans-serif'; x.fillText(`傳統上象徵${r.main[2]}`,70,1420);
+  const seg=[["我的星圖是",ink],[`「${persona}」`,violet],["型",ink]]; let px=70;
+  for(const [t,col] of seg){ x.fillStyle=col; x.fillText(t,px,1498); px+=x.measureText(t).width; }
+  // 守護石
+  x.fillStyle=ink; x.fillRect(64,1556,W-128,4);
+  x.font='500 32px "JetBrains Mono","Noto Sans TC",monospace'; x.fillText("守護石",64,1612);
+  [g1,g2].forEach((img,i)=>{ const bx=64+i*360; x.drawImage(img,bx-10,1630,140,140); x.font='900 50px "Noto Serif TC", serif'; x.fillText(guards[i],bx+130,1720); });
+  // 底部導流
+  x.fillRect(64,1800,W-128,4);
+  x.font='500 32px "JetBrains Mono","Noto Sans TC",monospace'; x.fillText("測測你的本命水晶 → @symbiosis_ore",64,1858);
+  // 紫色圓章
+  x.save(); x.translate(W-180,1668); x.rotate(-14*Math.PI/180); x.strokeStyle=x.fillStyle=violet;
+  x.lineWidth=8; x.beginPath(); x.arc(0,0,104,0,6.283); x.stroke(); x.lineWidth=3; x.beginPath(); x.arc(0,0,86,0,6.283); x.stroke();
+  x.font='900 54px "Noto Serif TC", serif'; x.textAlign="center"; x.textBaseline="middle"; x.fillText("共生礦",0,4); x.restore();
+  return new Promise(ok=>c.toBlob(ok,"image/png"));
+}
+
 function render(r, animate){
   const out=$("out"), day=r.cols[2].gan;
   let d=0; const nx=step=>`style="--d:${(d+=step).toFixed(2)}s"`;
@@ -432,15 +480,8 @@ function render(r, animate){
   let shareFile=null;
   playStage(out.querySelector(".stage"), r, play, ()=>{
     out.classList.remove("playing"); $("go").disabled=false;
-    // 結果卡片在背景轉成圖，按分享時直接附上（iPhone 要在點擊當下叫分享，不能等轉圖）
-    setTimeout(()=>{ if(!window.html2canvas) return;
-      html2canvas(out.querySelector(".sheet"),{scale:2,backgroundColor:"#EEEAE2",
-        ignoreElements:el=>el.classList&&(el.classList.contains("ghost")||el.classList.contains("dots")||el.classList.contains("skip")||el.id==="stage"),
-        width:540,height:960,windowWidth:540,
-        onclone:doc=>{ doc.querySelector(".sheet").classList.add("story"); }})
-      .then(c=>c.toBlob(b=>{ shareFile=window.__shareFile=new File([b],"本命水晶.png",{type:"image/png"}); }))
-      .catch(()=>{});
-    }, 1200);
+    // 限動圖在背景先畫好，按分享時直接附上（iPhone 要在點擊當下叫分享，不能等畫圖）
+    storyImage(r, day).then(b=>{ shareFile=window.__shareFile=new File([b],"本命水晶.png",{type:"image/png"}); }).catch(()=>{});
   });
   $("share").onclick = () => {
     const text = `我的本命水晶是${r.main[0]}，星圖屬於「${PERSONA[day]}」型。你的是哪一顆？`, url = shareUrl();
