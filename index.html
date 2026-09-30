@@ -29,11 +29,9 @@
 html{background:var(--paper)}
 body{margin:0;color:var(--ink);font:16px/1.7 var(--sans);background:var(--paper);padding-inline:16px;padding-block:20px 64px;caret-color:var(--violet);overflow-x:hidden}
 ::selection{background:var(--violet);color:var(--paper)}
-/* 紙紋顆粒與摺痕：像印好再掃描 */
+/* 紙紋顆粒：像印好再掃描 */
 body::before{content:"";position:fixed;inset:-20%;pointer-events:none;z-index:50;opacity:.32;mix-blend-mode:multiply;
   background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .1 0 0 0 0 .09 0 0 0 0 .12 0 0 0 .55 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")}
-body::after{content:"";position:fixed;inset:0;pointer-events:none;z-index:51;
-  background:linear-gradient(118deg,transparent 49.3%,rgba(28,26,31,.07) 49.8%,rgba(255,252,245,.35) 50.1%,transparent 50.6%)}
 .wrap{max-width:640px;margin:0 auto;display:grid;grid-template-columns:minmax(0,1fr);gap:40px}
 .mono{font:500 16px/1.6 var(--mono);letter-spacing:.02em}
 .rule{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;border-block:2px solid var(--ink);padding-block:6px}
@@ -403,11 +401,9 @@ async function storyImage(r, day){
     document.fonts.load('500 32px "JetBrains Mono"', "BIRTH STAR MAP @symbiosis_ore")
   ]).catch(()=>{});
   const [stone, g1, g2, logo] = await Promise.all([IMG(name), IMG(guards[0]), IMG(guards[1]), "logo-h.png"].map(loadImg));
-  // 紙、顆粒、摺痕
+  // 紙、顆粒
   x.fillStyle="#EEEAE2"; x.fillRect(0,0,W,H);
   for(let i=0;i<26000;i++){ x.fillStyle=`rgba(28,26,31,${Math.random()*.07})`; x.fillRect(Math.random()*W,Math.random()*H,2,2); }
-  x.lineWidth=3; x.strokeStyle="rgba(28,26,31,.08)"; x.beginPath(); x.moveTo(0,H*.63); x.lineTo(W,H*.41); x.stroke();
-  x.lineWidth=2; x.strokeStyle="rgba(255,252,245,.6)"; x.beginPath(); x.moveTo(0,H*.63+4); x.lineTo(W,H*.41+4); x.stroke();
   // 頁首：LOGO＋規格字
   x.fillStyle=ink; x.fillRect(64,96,W-128,4); x.fillRect(64,200,W-128,4);
   x.drawImage(logo,64,118,logo.width*64/logo.height,64);
@@ -429,8 +425,9 @@ async function storyImage(r, day){
   x.font='500 32px "JetBrains Mono","Noto Sans TC",monospace'; x.fillText("守護石",64,1612);
   [g1,g2].forEach((img,i)=>{ const bx=64+i*360; x.drawImage(img,bx-10,1630,140,140); x.font='900 50px "Noto Serif TC", serif'; x.fillText(guards[i],bx+130,1720); });
   // 底部導流
-  x.fillRect(64,1800,W-128,4);
-  x.font='500 32px "JetBrains Mono","Noto Sans TC",monospace'; x.fillText("測測你的本命水晶 → @symbiosis_ore",64,1858);
+  x.fillRect(64,1790,W-128,4);
+  x.font='500 32px "JetBrains Mono","Noto Sans TC",monospace'; x.fillText("想測你的本命水晶？到 IG 搜 @symbiosis_ore",64,1846);
+  x.fillText("→ 點主頁連結",64,1890);
   // 紫色圓章
   x.save(); x.translate(W-180,1668); x.rotate(-14*Math.PI/180); x.strokeStyle=x.fillStyle=violet;
   x.lineWidth=8; x.beginPath(); x.arc(0,0,104,0,6.283); x.stroke(); x.lineWidth=3; x.beginPath(); x.arc(0,0,86,0,6.283); x.stroke();
@@ -467,6 +464,7 @@ function render(r, animate){
       <button class="go" type="button" id="share" style="font-size:22px;letter-spacing:.2em">分享到限動</button>
       ${animate?'<button class="ghost-btn" type="button" id="again">換個生日再測</button>':''}
     </div>
+    <p id="shareTip" class="mono" hidden style="margin:0;font-size:16px">網址已複製，發限動時加「連結」貼紙貼上，朋友就能直接點進來玩。</p>
     <div id="shareBox" hidden>
       <p class="mono" style="margin:0;font-size:16px">長按圖片存到相簿，再分享到限動；文字可以直接複製：</p>
       <img id="shareImg" alt="我的本命水晶結果圖" style="width:100%;border:2px solid var(--ink)">
@@ -492,6 +490,7 @@ function render(r, animate){
       if(navigator.clipboard) navigator.clipboard.writeText(`${text}\n${url}`).catch(()=>{});
       $("shareBox").scrollIntoView({behavior:"smooth",block:"nearest"});
     };
+    if(navigator.clipboard) navigator.clipboard.writeText(url).then(()=>{ $("shareTip").hidden=false; }).catch(()=>{});
     const data = shareFile && navigator.share && navigator.canShare && navigator.canShare({files:[shareFile]})
       ? {files:[shareFile], text:`${text} ${url}`}
       : navigator.share ? {title:"本命水晶", text, url} : null;
