@@ -49,11 +49,10 @@ body::before{content:"";position:fixed;inset:-20%;pointer-events:none;z-index:50
 .cover .stamp{left:4px;bottom:92px}
 .cover .photo{position:absolute;right:-6%;bottom:6%;width:74%;aspect-ratio:1;z-index:3}
 
-/* 石頭照片：網點＋紫色殘影連拍 */
+/* 石頭照片：紫色殘影連拍 */
 .photo{position:relative;display:block}
 .photo img{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;z-index:2;filter:contrast(1.08) saturate(1.05) drop-shadow(0 0 1.5px var(--paper)) drop-shadow(0 0 1.5px var(--paper))}
-.photo .dots,.photo .ghost{position:absolute;inset:0;-webkit-mask:var(--src) center/contain no-repeat;mask:var(--src) center/contain no-repeat}
-.photo .dots{z-index:3;mix-blend-mode:multiply;opacity:.28;background:radial-gradient(circle,var(--ink) 34%,transparent 38%) 0 0/5px 5px}
+.photo .ghost{position:absolute;inset:0;-webkit-mask:var(--src) center/contain no-repeat;mask:var(--src) center/contain no-repeat}
 .photo .ghost{z-index:1;background:var(--violet)}
 .photo .g1{transform:translate(-9%,-7%);opacity:.9}
 .photo .g2{transform:translate(-18%,-14%);opacity:.55}
@@ -293,7 +292,7 @@ const IMG = name => `stones/${FILE[name]}.webp`;
 function mountPhoto(el, name, alt){
   const src = IMG(name);
   el.style.setProperty("--src", `url("${src}")`);
-  el.innerHTML = `<span class="ghost g2"></span><span class="ghost g1"></span><img src="${src}" alt="${esc(alt||"")}" decoding="async"><span class="dots"></span>`;
+  el.innerHTML = `<span class="ghost g2"></span><span class="ghost g1"></span><img src="${src}" alt="${esc(alt||"")}" decoding="async">`;
 }
 // 封面輪播五顆石頭
 (function cover(){
