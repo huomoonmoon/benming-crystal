@@ -95,7 +95,7 @@ button:focus-visible,select:focus-visible,input:focus-visible,a:focus-visible{ou
 .small{margin:0;font-size:17px}
 .small b{color:var(--violet)}
 .guards{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));border-top:2px solid var(--ink)}
-.guard{display:grid;grid-template-columns:84px 1fr;gap:10px;align-items:center;padding:12px 8px 0 0}
+.guard{display:grid;justify-items:center;text-align:center;gap:6px;padding:12px 8px 0 0}
 .guard+.guard{border-left:2px solid var(--ink);padding-left:10px}
 .guard .photo{width:84px;height:84px}
 .guard p{margin:0;font-size:16px;line-height:1.5}
@@ -106,11 +106,7 @@ button:focus-visible,select:focus-visible,input:focus-visible,a:focus-visible{ou
 .cta a:hover{transform:translate(-2px,-2px);box-shadow:7px 7px 0 var(--ink)}
 .ghost-btn{font:500 16px var(--mono);cursor:pointer;padding:12px 18px;background:transparent;color:var(--ink);border:2px solid var(--ink)}
 .ghost-btn:hover{background:var(--paper-2)}
-/* 截圖模式：只留結果卡片撐滿一個畫面，點一下返回 */
-body.shot .wrap>*:not(#out),body.shot #out>*:not(.sheet){display:none}
-body.shot .sheet{min-height:calc(100vh - 44px);align-content:space-between}
-body.shot .sheet .stamp{bottom:10px;right:10px}
-.toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);width:min(92vw,420px);text-align:center;line-height:1.5;z-index:60;background:var(--ink);color:var(--paper);font:500 16px var(--mono);padding:10px 16px;transition:opacity .6s}
+#shareBox:not([hidden]){display:grid;gap:10px}
 .note{border-top:2px solid var(--ink);padding-top:14px;display:grid;gap:8px;color:var(--ink-2)}
 .note p{margin:0;font-size:16px}
 
@@ -165,6 +161,7 @@ body.shot .sheet .stamp{bottom:10px;right:10px}
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/lunar-javascript@1.7.7/lunar.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 <script>
 // 網站上線後填正式網址（例："https://symbiosis-ore.com/star"）；空白時分享用目前網址
 const SITE_URL = "https://huomoonmoon.github.io/benming-crystal/";
@@ -245,7 +242,7 @@ const PERSONA = { // 依日主給的意象（畫面上不出現天干）
 const STONE_DESC = {
   白水晶:"白水晶在傳統上象徵澄澈與統合，也被視為萬用之石。出現在你的星圖裡，象徵你這段時間的功課，是把紛亂的想法整理清楚，找回自己的方向。",
   金髮晶:"相傳金髮晶裡的金色髮絲，象徵一股往前推的行動力。出現在你的星圖裡，象徵你的運勢關鍵在「動起來」：想到的事，先踏出第一步。",
-  硨磲:"硨磲在傳統上象徵潔淨，出現在你的星圖裡，象徵你這段路上最重要的，是保持初心，不被外面的雜音帶走。",
+  硨磲:"硨磲在傳統上象徵潔淨。出現在你的星圖裡，象徵你這段路上最重要的，是保持初心，不被外面的雜音帶走。",
   綠幽靈:"綠幽靈在傳統上象徵事業。出現在你的星圖裡，象徵你這段人生的重心落在事業，一點一滴的累積都算數。",
   東菱玉:"東菱玉在傳統上象徵機會與生機。出現在你的星圖裡，象徵你的命運裡藏著正在萌芽的機會，關鍵是看見它、接住它。",
   孔雀石:"孔雀石一圈圈的紋路，傳統上象徵轉化與守護。出現在你的星圖裡，象徵你的人生來到一段轉變的課題，舊的樣子，有機會慢慢換成新的。",
@@ -401,7 +398,7 @@ function render(r, animate){
         <button class="skip" type="button">略過動畫</button>
       </div>
       <h2 class="huge stone-name after" ${nx(.1)}>${r.main[0]}</h2>
-      <p class="small after" ${nx(.12)}><span class="mono">你的本命水晶｜</span>${STONE_DESC[r.main[0]]}</p>
+      <p class="small after" ${nx(.12)}><span class="mono">你的本命水晶｜</span>${STONE_DESC[r.main[0]].replace("。出現在你的星圖裡","。<br>出現在你的星圖裡")}</p>
       <p class="small after" ${nx(.15)}>你的星圖屬於<b>「${PERSONA[day]}」</b>型。這類星圖的人，常被形容${PERSONA_DESC[day]}</p>
       <div class="after" ${nx(.15)}>
         <h3 class="huge guard-h">${PERSONA[day]}型的守護石</h3>
@@ -410,34 +407,48 @@ function render(r, animate){
           <div class="guard"><div class="photo" data-n="${g[0]}"></div><p><b>${g[0]}</b><br>象徵${g[2]}</p></div>`).join("")}</div>
       </div>
       <div class="after" ${nx(.1)}>${stampSvg()}</div>
-      <p class="mono after" ${nx(.1)} style="margin:0;font-size:16px;color:var(--ink-2)">測測你的本命水晶 · ${SITE_URL ? esc(SITE_URL.replace(/^https?:\/\//,"")) : "@symbiosis_ore"}</p>
+      <p class="mono after" ${nx(.1)} style="margin:0;font-size:16px;color:var(--ink-2)">測測你的本命水晶 · <a href="https://www.instagram.com/symbiosis_ore/" target="_blank" rel="noopener" style="color:inherit;text-underline-offset:3px">@symbiosis_ore</a></p>
     </div>
     <div class="cta after" ${nx(.12)}>
-      <button class="ghost-btn" type="button" id="share">分享給朋友</button>
-      <button class="ghost-btn" type="button" id="shot">截圖分享</button>
+      <button class="go" type="button" id="share" style="font-size:22px;letter-spacing:.2em">分享到限動</button>
+      ${animate?'<button class="ghost-btn" type="button" id="again">換個生日再測</button>':''}
     </div>
-    <p id="shareText" class="mono" hidden style="margin:0;font-size:16px;white-space:pre-wrap;user-select:all;border:2px dashed var(--ink);padding:10px 12px"></p>
-    <p class="mono after" ${nx(.1)} style="margin:0;font-size:16px;color:var(--ink-2)">按「截圖分享」後，請用手機自己截圖，再分享到限動。</p>
+    <div id="shareBox" hidden>
+      <p class="mono" style="margin:0;font-size:16px">長按圖片存到相簿，再分享到限動；文字可以直接複製：</p>
+      <img id="shareImg" alt="我的本命水晶結果圖" style="width:100%;border:2px solid var(--ink)">
+      <p id="shareText" class="mono" style="margin:0;font-size:16px;white-space:pre-wrap;user-select:all;border:2px dashed var(--ink);padding:10px 12px"></p>
+    </div>
     `;
   const play = animate && !reduce;
   out.classList.toggle("playing", play);
   mountPhoto($("stone"), r.main[0], r.main[0]);
   out.querySelectorAll(".guard .photo").forEach(el=>mountPhoto(el, el.dataset.n, el.dataset.n));
-  playStage(out.querySelector(".stage"), r, play, ()=>{ out.classList.remove("playing"); $("go").disabled=false; });
+  let shareFile=null;
+  playStage(out.querySelector(".stage"), r, play, ()=>{
+    out.classList.remove("playing"); $("go").disabled=false;
+    // 結果卡片在背景轉成圖，按分享時直接附上（iPhone 要在點擊當下叫分享，不能等轉圖）
+    setTimeout(()=>{ if(!window.html2canvas) return;
+      html2canvas(out.querySelector(".sheet"),{scale:2,backgroundColor:"#EEEAE2",
+        ignoreElements:el=>el.classList&&(el.classList.contains("ghost")||el.classList.contains("dots")||el.classList.contains("skip")||el.id==="stage"),
+        onclone:doc=>{ const st=doc.querySelector(".sheet .stamp"); if(st){ st.style.bottom="10px"; st.style.right="10px"; } }})
+      .then(c=>c.toBlob(b=>{ shareFile=window.__shareFile=new File([b],"本命水晶.png",{type:"image/png"}); }))
+      .catch(()=>{});
+    }, 1200);
+  });
   $("share").onclick = () => {
     const text = `我的本命水晶是${r.main[0]}，星圖屬於「${PERSONA[day]}」型。你的是哪一顆？`, url = shareUrl();
-    // 一律顯示可選取的分享文字，分享選單或剪貼簿被擋時客人還能手動複製
-    const box=$("shareText"); box.textContent=`${text}\n${url}`; box.hidden=false;
-    const copy=()=>(navigator.clipboard ? navigator.clipboard.writeText(`${text}\n${url}`) : Promise.reject())
-      .then(()=>{$("share").textContent="已複製，貼給朋友";}).catch(()=>{$("share").textContent="長按下方文字複製";});
-    if(!navigator.share) return copy();
-    navigator.share({title:"本命水晶", text, url}).catch(e=>{ if(e.name!=="AbortError") copy(); });
-  };
-  $("shot").onclick = () => {
-    document.body.classList.add("shot"); scrollTo(0,0);
-    const t=document.createElement("p"); t.className="toast"; t.textContent="請自己截圖：iPhone 按側邊鍵＋音量上，Android 按電源鍵＋音量下。截好後點一下畫面返回。"; document.body.append(t);
-    setTimeout(()=>{ t.style.opacity=0; setTimeout(()=>t.remove(),700); }, 4000);
-    setTimeout(()=>addEventListener("click", ()=>{ document.body.classList.remove("shot"); t.remove(); $("out").scrollIntoView(); }, {once:true}), 0);
+    // 分享選單被擋（例如預覽頁）時：顯示結果圖讓客人長按存，並附上可複製的文字
+    const fallback=()=>{
+      $("shareText").textContent=`${text}\n${url}`; $("shareBox").hidden=false;
+      if(shareFile) $("shareImg").src=URL.createObjectURL(shareFile); else $("shareImg").hidden=true;
+      if(navigator.clipboard) navigator.clipboard.writeText(`${text}\n${url}`).catch(()=>{});
+      $("shareBox").scrollIntoView({behavior:"smooth",block:"nearest"});
+    };
+    const data = shareFile && navigator.share && navigator.canShare && navigator.canShare({files:[shareFile]})
+      ? {files:[shareFile], text:`${text} ${url}`}
+      : navigator.share ? {title:"本命水晶", text, url} : null;
+    if(!data) return fallback();
+    navigator.share(data).catch(e=>{ if(e.name!=="AbortError") fallback(); });
   };
 }
 
@@ -465,6 +476,8 @@ $("f").addEventListener("submit", e => {
   if(noHour && jieDay(y,m,d)) return fail("你生日那天的星圖剛好在變換，結果會隨出生時間不同，請填出生時間（大概的時段也可以）。");
   err.hidden=true; $("go").disabled=!reduce;
   render(analyze(y,m,d,noHour?12:h,noHour?0:mi,noHour), true);
+  $("f").hidden=true;
+  $("again").onclick=()=>{ $("f").hidden=false; $("f").scrollIntoView({behavior:reduce?"auto":"smooth"}); };
   $("out").scrollIntoView({behavior:reduce?"auto":"smooth",block:"start"});
 });
 if(typeof Solar!=="undefined") render(analyze(1998,6,20,8,15,false), false);
