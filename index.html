@@ -107,6 +107,12 @@ button:focus-visible,select:focus-visible,input:focus-visible,a:focus-visible{ou
 .ghost-btn{font:500 16px var(--mono);cursor:pointer;padding:12px 18px;background:transparent;color:var(--ink);border:2px solid var(--ink)}
 .ghost-btn:hover{background:var(--paper-2)}
 #shareBox:not([hidden]){display:grid;gap:10px}
+/* 限動專用版面（只在轉圖的複本上套用）：540×960，放大兩倍＝1080×1920 */
+.sheet.story{width:540px;height:960px;overflow:hidden;align-content:space-between;gap:10px;padding:26px 26px 22px}
+.sheet.story .stage{width:66%;justify-self:center}
+.sheet.story .stone-name{font-size:92px}
+.sheet.story .pdesc{display:none}
+.sheet.story .guard .photo{width:72px;height:72px}
 .note{border-top:2px solid var(--ink);padding-top:14px;display:grid;gap:8px;color:var(--ink-2)}
 .note p{margin:0;font-size:16px}
 
@@ -399,7 +405,7 @@ function render(r, animate){
       </div>
       <h2 class="huge stone-name after" ${nx(.1)}>${r.main[0]}</h2>
       <p class="small after" ${nx(.12)}><span class="mono">你的本命水晶｜</span>${STONE_DESC[r.main[0]].replace("。出現在你的星圖裡","。<br>出現在你的星圖裡")}</p>
-      <p class="small after" ${nx(.15)}>你的星圖屬於<b>「${PERSONA[day]}」</b>型。這類星圖的人，常被形容${PERSONA_DESC[day]}</p>
+      <p class="small after" ${nx(.15)}>你的星圖屬於<b>「${PERSONA[day]}」</b>型。<span class="pdesc">這類星圖的人，常被形容${PERSONA_DESC[day]}</span></p>
       <div class="after" ${nx(.15)}>
         <h3 class="huge guard-h">${PERSONA[day]}型的守護石</h3>
         <p class="mono" style="margin:4px 0 10px;font-size:16px">陪「${PERSONA[day]}」型的你，跟本命水晶搭在一起戴</p>
@@ -430,7 +436,8 @@ function render(r, animate){
     setTimeout(()=>{ if(!window.html2canvas) return;
       html2canvas(out.querySelector(".sheet"),{scale:2,backgroundColor:"#EEEAE2",
         ignoreElements:el=>el.classList&&(el.classList.contains("ghost")||el.classList.contains("dots")||el.classList.contains("skip")||el.id==="stage"),
-        onclone:doc=>{ const st=doc.querySelector(".sheet .stamp"); if(st){ st.style.bottom="10px"; st.style.right="10px"; } }})
+        width:540,height:960,windowWidth:540,
+        onclone:doc=>{ doc.querySelector(".sheet").classList.add("story"); }})
       .then(c=>c.toBlob(b=>{ shareFile=window.__shareFile=new File([b],"本命水晶.png",{type:"image/png"}); }))
       .catch(()=>{});
     }, 1200);
