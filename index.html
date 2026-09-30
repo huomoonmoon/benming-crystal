@@ -1,0 +1,473 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>本命水晶</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@900&family=Noto+Sans+TC:wght@400;700&family=JetBrains+Mono:wght@500&display=swap">
+<style>
+/* 海報風：米白紙＋近黑墨＋一個電光紫，只有兩種字級（巨大明體／小字） */
+:root{
+  color-scheme:light;
+  --paper:#EEEAE2; --paper-2:#E4DFD5; --ink:#1C1A1F; --ink-2:#4A4450; --violet:#6E3BFF; --err:#B3261E;
+  --display:"Noto Serif TC","Songti TC","PMingLiU",serif;
+  --sans:"Noto Sans TC","PingFang TC","Microsoft JhengHei",sans-serif;
+  --mono:"JetBrains Mono","Noto Sans TC",monospace;
+  --ease:cubic-bezier(.16,1,.3,1);
+}
+*{box-sizing:border-box}
+html{background:var(--paper)}
+body{margin:0;color:var(--ink);font:16px/1.7 var(--sans);background:var(--paper);padding-inline:16px;padding-block:20px 64px;caret-color:var(--violet);overflow-x:hidden}
+::selection{background:var(--violet);color:var(--paper)}
+/* 紙紋顆粒與摺痕：像印好再掃描 */
+body::before{content:"";position:fixed;inset:-20%;pointer-events:none;z-index:50;opacity:.32;mix-blend-mode:multiply;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .1 0 0 0 0 .09 0 0 0 0 .12 0 0 0 .55 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")}
+body::after{content:"";position:fixed;inset:0;pointer-events:none;z-index:51;
+  background:linear-gradient(118deg,transparent 49.3%,rgba(28,26,31,.07) 49.8%,rgba(255,252,245,.35) 50.1%,transparent 50.6%)}
+.wrap{max-width:640px;margin:0 auto;display:grid;grid-template-columns:minmax(0,1fr);gap:40px}
+.mono{font:500 16px/1.6 var(--mono);letter-spacing:.02em}
+.rule{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;border-block:2px solid var(--ink);padding-block:6px}
+
+/* 巨大明體：只給主字與石名；紫色套印偏移 */
+.huge{font-family:var(--display);font-weight:900;line-height:.92;letter-spacing:-.03em;margin:0;color:var(--ink);
+  text-shadow:.045em .03em 0 rgba(110,59,255,.85)}
+
+/* 封面 */
+.cover{position:relative;min-height:min(150vw,860px);padding-top:8px}
+.cover h1{font-size:clamp(104px,31vw,210px);position:relative;z-index:2}
+.cover .lede{position:absolute;left:0;bottom:0;max-width:18em;margin:0;z-index:4;background:var(--paper);padding:4px 8px 4px 0}
+.spec{position:absolute;right:0;top:12px;writing-mode:vertical-rl;z-index:4;font:500 16px var(--mono);letter-spacing:.08em;color:var(--ink)}
+.stamp{position:absolute;z-index:5;width:112px;height:112px;color:var(--violet);transform:rotate(-14deg)}
+.cover .stamp{left:4px;bottom:92px}
+.cover .photo{position:absolute;right:-6%;bottom:6%;width:74%;aspect-ratio:1;z-index:3}
+
+/* 石頭照片：網點＋紫色殘影連拍 */
+.photo{position:relative;display:block}
+.photo img{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;z-index:2;filter:contrast(1.08) saturate(1.05) drop-shadow(0 0 1.5px var(--paper)) drop-shadow(0 0 1.5px var(--paper))}
+.photo .dots,.photo .ghost{position:absolute;inset:0;-webkit-mask:var(--src) center/contain no-repeat;mask:var(--src) center/contain no-repeat}
+.photo .dots{z-index:3;mix-blend-mode:multiply;opacity:.28;background:radial-gradient(circle,var(--ink) 34%,transparent 38%) 0 0/5px 5px}
+.photo .ghost{z-index:1;background:var(--violet)}
+.photo .g1{transform:translate(-9%,-7%);opacity:.9}
+.photo .g2{transform:translate(-18%,-14%);opacity:.55}
+.anim .photo .g1{animation:strobe1 4.8s var(--ease) infinite}
+.anim .photo .g2{animation:strobe2 4.8s var(--ease) infinite}
+@keyframes strobe1{0%,12%{transform:translate(0,0);opacity:0}30%,80%{transform:translate(-9%,-7%);opacity:.9}100%{transform:translate(-9%,-7%);opacity:0}}
+@keyframes strobe2{0%,22%{transform:translate(0,0);opacity:0}42%,80%{transform:translate(-18%,-14%);opacity:.55}100%{transform:translate(-18%,-14%);opacity:0}}
+
+/* 表單：印刷表格 */
+form{display:grid;gap:18px;border-top:2px solid var(--ink);padding-top:18px}
+fieldset{border:0;margin:0;padding:0;display:grid;gap:8px;min-width:0}
+legend{font:500 16px var(--mono);padding:0;margin-bottom:8px}
+.sel{display:grid;gap:10px}
+.sel.date{grid-template-columns:1.5fr 1fr 1fr}
+.sel.time{grid-template-columns:1fr 1fr}
+select{font:700 18px var(--sans);color:var(--ink);background:transparent;border:0;border-bottom:2px solid var(--ink);border-radius:0;padding:8px 26px 8px 2px;width:100%;appearance:none;
+  background-image:linear-gradient(45deg,transparent 50%,var(--violet) 50%),linear-gradient(135deg,var(--violet) 50%,transparent 50%);
+  background-position:calc(100% - 13px) 55%,calc(100% - 7px) 55%;background-size:6px 6px;background-repeat:no-repeat}
+select:hover{border-bottom-color:var(--violet)}
+select:disabled{opacity:.35}
+.check{display:flex;gap:10px;align-items:center;font:500 16px var(--mono);accent-color:var(--violet);cursor:pointer}
+.check input{width:18px;height:18px}
+.go{font:900 30px var(--display);letter-spacing:.35em;text-indent:.35em;cursor:pointer;border:0;border-radius:0;padding:14px 20px;color:var(--paper);background:var(--violet);
+  box-shadow:5px 5px 0 var(--ink);transition:transform .2s var(--ease),box-shadow .2s var(--ease)}
+.go:hover{transform:translate(-2px,-2px);box-shadow:7px 7px 0 var(--ink)}
+.go:active{transform:translate(3px,3px);box-shadow:2px 2px 0 var(--ink)}
+.go:disabled{opacity:.6;cursor:progress}
+button:focus-visible,select:focus-visible,input:focus-visible,a:focus-visible{outline:3px solid var(--violet);outline-offset:3px}
+.err{margin:0;color:var(--err);font:700 16px var(--sans)}
+
+/* 結果：一張可截圖的小海報 */
+#out{display:grid;gap:22px;scroll-margin-top:12px}
+.sheet{position:relative;border:2px solid var(--ink);padding:18px 16px 22px;display:grid;gap:18px;background:var(--paper)}
+.sheet .stamp{right:-8px;bottom:-34px;width:96px;height:96px}
+.stage{position:relative;width:100%;aspect-ratio:1;cursor:pointer}
+.stage canvas,.stage svg{position:absolute;inset:0;width:100%;height:100%}
+.stage #stone{position:absolute;inset:6%;transition:opacity 1s var(--ease),transform 1s var(--ease)}
+.dial{color:var(--ink);transition:opacity 1s var(--ease)}
+.dial .spin{animation:spin 90s linear infinite;transform-origin:0 0}
+@keyframes spin{to{transform:rotate(360deg)}}
+.stage.forming #stone{opacity:0;transform:scale(.94)}
+.stage.forming .dial{opacity:.25}
+.skip{position:absolute;right:0;bottom:0;font:500 16px var(--mono);color:var(--ink-2);background:var(--paper);border:0;cursor:pointer;padding:4px 8px}
+.stage:not(.forming) .skip{display:none}
+.stone-name{font-size:clamp(76px,22vw,136px)}
+.small{margin:0;font-size:17px}
+.small b{color:var(--violet)}
+.guards{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));border-top:2px solid var(--ink)}
+.guard{display:grid;grid-template-columns:84px 1fr;gap:10px;align-items:center;padding:12px 8px 0 0}
+.guard+.guard{border-left:2px solid var(--ink);padding-left:10px}
+.guard .photo{width:84px;height:84px}
+.guard p{margin:0;font-size:16px;line-height:1.5}
+.guard b{font:900 26px/1.3 var(--display)}
+.guard-h{font-size:34px;margin:0}
+.cta{display:flex;flex-wrap:wrap;gap:14px}
+.cta a{text-decoration:none;font:900 22px var(--display);letter-spacing:.12em;padding:12px 22px;color:var(--paper);background:var(--violet);box-shadow:5px 5px 0 var(--ink);transition:transform .2s var(--ease),box-shadow .2s var(--ease)}
+.cta a:hover{transform:translate(-2px,-2px);box-shadow:7px 7px 0 var(--ink)}
+.ghost-btn{font:500 16px var(--mono);cursor:pointer;padding:12px 18px;background:transparent;color:var(--ink);border:2px solid var(--ink)}
+.ghost-btn:hover{background:var(--paper-2)}
+/* 截圖模式：只留結果卡片撐滿一個畫面，點一下返回 */
+body.shot .wrap>*:not(#out),body.shot #out>*:not(.sheet){display:none}
+body.shot .sheet{min-height:calc(100vh - 44px);align-content:space-between}
+body.shot .sheet .stamp{bottom:10px;right:10px}
+.toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);width:min(92vw,420px);text-align:center;line-height:1.5;z-index:60;background:var(--ink);color:var(--paper);font:500 16px var(--mono);padding:10px 16px;transition:opacity .6s}
+.note{border-top:2px solid var(--ink);padding-top:14px;display:grid;gap:8px;color:var(--ink-2)}
+.note p{margin:0;font-size:16px}
+
+.after{transition:opacity .8s var(--ease),transform .8s var(--ease);transition-delay:var(--d,0s)}
+#out.playing .after{opacity:0;transform:translateY(12px);transition:none}
+@media (prefers-reduced-motion: reduce){
+  .dial .spin,.anim .photo .g1,.anim .photo .g2{animation:none}
+  .after,.stage #stone,.dial{transition:none}
+}
+</style>
+
+</head>
+<body>
+<div class="wrap">
+  <div class="rule mono" style="align-items:center"><img src="logo-h.png" alt="共生礦 SYMBIO ORE" style="height:40px;width:auto;display:block"><span>BIRTH STAR MAP</span></div>
+
+  <section class="cover anim">
+    <h1 class="huge">本命<br>水晶？</h1>
+    <div id="gem" class="photo" aria-hidden="true"></div>
+    <p class="spec">CAT. SO-000 / BIRTH STAR MAP / 本命水晶測驗</p>
+    <svg class="stamp" viewBox="0 0 120 120" aria-hidden="true"><circle cx="60" cy="60" r="54" fill="none" stroke="currentColor" stroke-width="4"/><circle cx="60" cy="60" r="44" fill="none" stroke="currentColor" stroke-width="1.5"/><text x="60" y="71" text-anchor="middle" font-family="Noto Serif TC,serif" font-weight="900" font-size="30" fill="currentColor">共生礦</text></svg>
+    <p class="lede small">你出生的那一刻，星空排成一幅只屬於你的圖。輸入生日，看它凝結成哪一顆石頭。</p>
+  </section>
+
+  <form id="f" novalidate>
+    <fieldset>
+      <legend>出生日期（西元）</legend>
+      <div class="sel date">
+        <select id="y" aria-label="西元年"></select>
+        <select id="m" aria-label="月"></select>
+        <select id="d" aria-label="日"></select>
+      </div>
+    </fieldset>
+    <fieldset>
+      <legend>出生時間</legend>
+      <div class="sel time">
+        <select id="hh" aria-label="時"></select>
+        <select id="mm" aria-label="分"></select>
+      </div>
+    </fieldset>
+    <label class="check"><input id="nohour" type="checkbox"> 不知道幾點出生</label>
+    <p class="err" id="err" hidden></p>
+    <button class="go" id="go" type="submit">開啟星圖</button>
+  </form>
+
+  <div id="out"></div>
+
+  <div class="note">
+    <p>請輸入台灣時間。台灣在 1945–1961、1974、1975、1979 年夏季曾實施日光節約時間，這段期間出生請把鐘錶時間減 1 小時，星圖會更準。</p>
+    <p>出生時刻與水晶的對應為民俗文化傳統說法，僅供參考。水晶為飾品與裝飾用途，不具任何醫療、保健或疾病預防功效。</p>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/lunar-javascript@1.7.7/lunar.js"></script>
+<script>
+// 網站上線後填正式網址（例："https://symbiosis-ore.com/star"）；空白時分享用目前網址
+const SITE_URL = "https://huomoonmoon.github.io/benming-crystal/";
+const shareUrl = () => SITE_URL || location.href.split("#")[0];
+
+const WX = ["木","火","土","金","水"];
+const GAN_WX = {甲:"木",乙:"木",丙:"火",丁:"火",戊:"土",己:"土",庚:"金",辛:"金",壬:"水",癸:"水"};
+const HIDE_W = {1:[10],2:[7,3],3:[6,3,1]}; // 以 10 為一分，整數計算避免浮點誤差
+const gen = e => WX[(WX.indexOf(e)+1)%5];   // 我生
+const genBy = e => WX[(WX.indexOf(e)+4)%5]; // 生我
+const ctrl = e => WX[(WX.indexOf(e)+2)%5];  // 我剋
+const ctrlBy = e => WX[(WX.indexOf(e)+3)%5];// 剋我
+
+// 石頭五行與象徵依共生礦 stones.md（畫面上不顯示五行）
+const STONES = {
+  金:[["白水晶","#DADDE0","澄澈、統合"],["金髮晶","#D8C48A","行動力"],["硨磲","#EFEBE3","潔淨"]],
+  木:[["綠幽靈","#7FA07A","事業"],["東菱玉","#5E9468","機會、生機"],["孔雀石","#2F8062","轉化、守護"]],
+  水:[["黑曜石","#3A3D44","擋煞、落地"],["海藍寶","#9CC6D6","表達、順流"],["月光石","#D5DCE8","陰性、循環"]],
+  火:[["紫水晶","#9C74C0","靜心、直覺"],["粉晶","#E8B4BE","人緣、桃花"],["紅瑪瑙","#C0603F","行動、熱情"]],
+  土:[["黃水晶","#E0B04E","招財"],["茶晶","#8A6F55","落地"],["虎眼石","#A8773A","決斷、財"]]
+};
+const DAY_MASTER = { // [意象, 傳統上的個性形容]
+  甲:["大樹","正直、有擔當，總想往上長"],
+  乙:["花草","柔韌、懂得變通，很會借力使力"],
+  丙:["太陽","熱情大方，走到哪裡都是亮的"],
+  丁:["燭火","細膩溫暖，默默照亮身邊的人"],
+  戊:["高山","穩重可靠，是朋友眼中的靠山"],
+  己:["田園","包容細心，擅長把事情慢慢養大"],
+  庚:["原礦","果斷直接，重情重義"],
+  辛:["珠玉","講究品味，外柔內剛"],
+  壬:["江河","思路靈活，閒不下來"],
+  癸:["雨露","心思細膩，直覺敏銳"]
+};
+const ZHI = "子丑寅卯辰巳午未申酉戌亥";
+
+function analyze(y,m,d,h,mi,noHour){
+  const ec = Solar.fromYmdHms(y,m,d,noHour?12:h,noHour?0:mi,0).getLunar().getEightChar();
+  const cols = [
+    {name:"年",gan:ec.getYearGan(),zhi:ec.getYearZhi(),hide:ec.getYearHideGan(),k:1},
+    {name:"月",gan:ec.getMonthGan(),zhi:ec.getMonthZhi(),hide:ec.getMonthHideGan(),k:2},
+    {name:"日",gan:ec.getDayGan(),zhi:ec.getDayZhi(),hide:ec.getDayHideGan(),k:1},
+    {name:"時",gan:ec.getTimeGan(),zhi:ec.getTimeZhi(),hide:ec.getTimeHideGan(),k:1}
+  ];
+  if(noHour) cols[3].empty = true;
+  const score = {木:0,火:0,土:0,金:0,水:0};
+  for(const c of cols){
+    if(c.empty) continue;
+    score[GAN_WX[c.gan]] += 10;
+    const w = HIDE_W[c.hide.length];
+    c.hide.forEach((g,i)=> score[GAN_WX[g]] += w[i]*c.k);
+  }
+  const me = GAN_WX[ec.getDayGan()];
+  const total = WX.reduce((s,e)=>s+score[e],0);
+  const strong = (score[me]+score[genBy(me)])*2 > total;
+  const cand = strong ? [ctrlBy(me),gen(me),ctrl(me)] : [genBy(me),me];
+  cand.sort((a,b)=>score[a]-score[b]);
+  const yong = cand[0], xi = cand[1];
+  const seed = ZHI.indexOf(cols[2].zhi) + ZHI.indexOf(cols[1].zhi);
+  return {cols, score, yong, xi,
+    main: STONES[yong][seed%3],
+    guards: [STONES[yong][(seed+1)%3], STONES[xi][seed%3]]};
+}
+
+// 當天交「節」時，00:00 與 23:59 的年柱或月柱會不同
+function jieDay(y,m,d){
+  const a = Solar.fromYmdHms(y,m,d,0,0,0).getLunar().getEightChar();
+  const b = Solar.fromYmdHms(y,m,d,23,59,0).getLunar().getEightChar();
+  return a.getYear()!==b.getYear() || a.getMonth()!==b.getMonth();
+}
+
+
+
+
+const PERSONA = { // 依日主給的意象（畫面上不出現天干）
+  甲:"大樹",乙:"花草",丙:"太陽",丁:"燭火",戊:"高山",己:"田園",庚:"原礦",辛:"珠玉",壬:"江河",癸:"雨露"
+};
+// 結果頁的石頭描述：傳統象徵（只取 stones.md 主表）＋它在星圖裡象徵的人生課題。一律「象徵」框架，不寫因果承諾
+const STONE_DESC = {
+  白水晶:"白水晶在傳統上象徵澄澈與統合，也被視為萬用之石。出現在你的星圖裡，象徵你這段時間的功課，是把紛亂的想法整理清楚，找回自己的方向。",
+  金髮晶:"相傳金髮晶裡的金色髮絲，象徵一股往前推的行動力。出現在你的星圖裡，象徵你的運勢關鍵在「動起來」：想到的事，先踏出第一步。",
+  硨磲:"硨磲在傳統上象徵潔淨，出現在你的星圖裡，象徵你這段路上最重要的，是保持初心，不被外面的雜音帶走。",
+  綠幽靈:"綠幽靈在傳統上象徵事業。出現在你的星圖裡，象徵你這段人生的重心落在事業，一點一滴的累積都算數。",
+  東菱玉:"東菱玉在傳統上象徵機會與生機。出現在你的星圖裡，象徵你的命運裡藏著正在萌芽的機會，關鍵是看見它、接住它。",
+  孔雀石:"孔雀石一圈圈的紋路，傳統上象徵轉化與守護。出現在你的星圖裡，象徵你的人生來到一段轉變的課題，舊的樣子，有機會慢慢換成新的。",
+  黑曜石:"黑曜石在傳統上象徵擋煞與落地。出現在你的星圖裡，象徵你需要一份穩穩的底氣，在人多事雜的時候站穩腳步。",
+  海藍寶:"海藍寶在傳統上象徵表達與順流。出現在你的星圖裡，象徵你這一段的關鍵在「說出口」：把心裡的想法表達出來，讓事情順著流動。",
+  月光石:"月光石在傳統上象徵陰性與循環，像月亮一樣有圓有缺。出現在你的星圖裡，象徵你的人生有自己的節奏，有圓有缺，缺的時候，也在等下一次亮起來。",
+  紫水晶:"紫水晶在傳統上被視為與靜心、直覺相關的石頭。出現在你的星圖裡，象徵你要的答案常常藏在直覺裡，靜下來，聽聽自己的聲音。",
+  粉晶:"粉晶在傳統上象徵人緣與桃花。出現在你的星圖裡，象徵你的好運多半和人有關：珍惜身邊的緣分，也留意願意拉你一把的人。",
+  紅瑪瑙:"紅瑪瑙在傳統上象徵行動與熱情。出現在你的星圖裡，象徵你這段時間需要的是一股熱度：把想做的事，熱熱地做下去。",
+  黃水晶:"黃水晶在傳統上被視為招財的代表石。出現在你的星圖裡，象徵你的課題落在財運：看見機會，也守住手上的收成。",
+  茶晶:"茶晶在傳統上象徵落地（Grounding）。出現在你的星圖裡，象徵你的力量來自腳踏實地，一步一步走，比一次衝到底更適合你。",
+  虎眼石:"虎眼石那道流動的光，傳統上象徵決斷與財。出現在你的星圖裡，象徵你的人生課題在「決斷」：遇到路口時，想清楚了，就為自己做決定。"
+};
+// 星圖類型的個性描寫（民間說法，用「常被形容」框架）
+const PERSONA_DESC = {
+  甲:"正直、有擔當，總想往上長。做決定前會先想清楚方向，一旦定了就很少回頭，身邊的人常把你當成可以靠著的那棵樹。",
+  乙:"柔韌、懂得變通，很會借力使力。看起來溫和，其實很有韌性，總能在縫隙裡找到自己的位置。",
+  丙:"熱情大方，走到哪裡都是亮的。喜歡把氣氛帶起來，也樂於照顧身邊的人，只是偶爾會忘了留點時間給自己。",
+  丁:"細膩溫暖，默默照亮身邊的人。觀察力敏銳，常常是第一個發現朋友心情不對的人。",
+  戊:"穩重可靠，是朋友眼中的靠山。不輕易動搖，很重承諾，慢熱，但讓人很安心。",
+  己:"包容細心，擅長把事情慢慢養大。願意花時間經營關係和生活，身邊的人常在不知不覺中被你照顧到。",
+  庚:"果斷直接，重情重義。說話不拐彎，對朋友很講義氣，就像還沒打磨的原礦，本身就很有份量。",
+  辛:"講究品味，外柔內剛。對細節有自己的堅持，看起來溫和好相處，心裡其實很有主見。",
+  壬:"思路靈活，閒不下來。喜歡新鮮事，腦中總有好幾個點子同時在跑，在變化多的環境裡最能發揮。",
+  癸:"心思細膩，直覺敏銳。安靜但感受力強，常能察覺別人沒說出口的心情。"
+};
+const GAN = "甲乙丙丁戊己庚辛壬癸";
+const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
+const $ = id => document.getElementById(id);
+const esc = s => String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+function hexRgb(h){const n=parseInt(h.slice(1),16);return [n>>16&255,n>>8&255,n&255];}
+function mix(a,b,t){return a.map((v,i)=>v+(b[i]-v)*t);}
+const lum = h => { const [r,g,b]=hexRgb(h); return (r*299+g*587+b*114)/1000; };
+// 在紙上太淺的石頭顏色（白水晶、月光石）改用墨色，太深的照舊
+const onPaper = h => lum(h) > 175 ? "#1C1A1F" : h;
+
+/* ---------- 石頭照片（GPT 生成、已去背） ---------- */
+const FILE = {白水晶:"clear-quartz",金髮晶:"gold-rutile",硨磲:"tridacna",綠幽靈:"green-phantom",東菱玉:"aventurine",孔雀石:"malachite",
+  黑曜石:"obsidian",海藍寶:"aquamarine",月光石:"moonstone",紫水晶:"amethyst",粉晶:"rose-quartz",紅瑪瑙:"carnelian",
+  黃水晶:"citrine",茶晶:"smoky-quartz",虎眼石:"tigers-eye"};
+const IMG = name => `stones/${FILE[name]}.webp`;
+function mountPhoto(el, name, alt){
+  const src = IMG(name);
+  el.style.setProperty("--src", `url("${src}")`);
+  el.innerHTML = `<span class="ghost g2"></span><span class="ghost g1"></span><img src="${src}" alt="${esc(alt||"")}" decoding="async"><span class="dots"></span>`;
+}
+// 封面輪播五顆石頭
+(function cover(){
+  const list=["紫水晶","黃水晶","海藍寶","粉晶","綠幽靈"]; let i=0;
+  mountPhoto($("gem"), list[0]);
+  if(reduce) return;
+  setInterval(()=>{ i=(i+1)%list.length; mountPhoto($("gem"), list[i]); }, 4800);
+})();
+
+/* ---------- 誕生星圖：由生辰決定星星位置（不顯示任何干支） ---------- */
+function starsOf(r){
+  const pts=[];
+  r.cols.forEach((c,i)=>{
+    if(c.empty) return;
+    const g=GAN.indexOf(c.gan), z=ZHI.indexOf(c.zhi), a0=-Math.PI/2+i*Math.PI/2;
+    const a1=a0+(g-4.5)*.07, a2=a0+Math.PI/4+(z-5.5)*.05;
+    pts.push([.5+Math.cos(a1)*(.2+g*.018),.5+Math.sin(a1)*(.2+g*.018)]);
+    pts.push([.5+Math.cos(a2)*(.26+z*.012),.5+Math.sin(a2)*(.26+z*.012)]);
+  });
+  return pts;
+}
+function dialSvg(){
+  const ticks=n=>Array.from({length:n},(_,i)=>{const a=i*2*Math.PI/n,l=i%6?5:12;
+    return `<line x1="${Math.cos(a)*150}" y1="${Math.sin(a)*150}" x2="${Math.cos(a)*(150-l)}" y2="${Math.sin(a)*(150-l)}"/>`;}).join("");
+  return `<svg class="dial" viewBox="-160 -160 320 320" aria-hidden="true">
+    <g class="spin" stroke="currentColor" stroke-width="1.4">${ticks(72)}<circle r="150" fill="none"/></g>
+    <circle r="124" fill="none" stroke="currentColor" stroke-width="1" stroke-dasharray="2 5"/>
+  </svg>`;
+}
+
+async function playStage(stage, r, animate, done){
+  const cv=stage.querySelector("#stage"), ctx=cv.getContext("2d");
+  const dpr=Math.min(devicePixelRatio||1,2), W=cv.width=cv.clientWidth*dpr, H=cv.height=cv.clientHeight*dpr;
+  const finish=()=>{ stage.classList.remove("forming"); ctx.clearRect(0,0,W,H); done(); };
+  if(!animate) return finish();
+  stage.classList.add("forming");
+  const img=stage.querySelector("#stone img");
+  try{ await img.decode(); }catch(e){}
+  const stars=starsOf(r).map(([x,y])=>[x*W,y*H]);
+  // 粒子目標：照片裡石頭本身的輪廓（不透明像素），位置與 #stone（inset 6%）一致
+  const cx=W/2, cy=H/2, box=W*.88, bx=W*.06, by=H*.06;
+  let crystal=[];
+  try{
+    const oc=document.createElement("canvas"); oc.width=W; oc.height=H; const o=oc.getContext("2d");
+    o.drawImage(img,bx,by,box,box);
+    const d=o.getImageData(0,0,W,H).data, step=Math.round(3*dpr);
+    for(let y=0;y<H;y+=step)for(let x=0;x<W;x+=step) if(d[(y*W+x)*4+3]>128) crystal.push([x,y]);
+  }catch(e){}
+  if(crystal.length<50) crystal=Array.from({length:400},()=>{const a=Math.random()*6.283,q=Math.sqrt(Math.random())*box*.3;return [cx+Math.cos(a)*q*.6,cy+Math.sin(a)*q];});
+  const N=innerWidth<600?900:1300, stoneRgb=hexRgb(onPaper(r.main[1])), ink=[28,26,31], violet=[110,59,255];
+  const P=Array.from({length:N},(_,i)=>{
+    const a=Math.random()*6.283, R=Math.max(W,H)*(.6+Math.random()*.4), st=stars[i%stars.length], sr=(Math.random()**2)*W*.035, sa=Math.random()*6.283;
+    return {x:W/2+Math.cos(a)*R, y:H/2+Math.sin(a)*R, vx:0, vy:0, sx:st[0]+Math.cos(sa)*sr, sy:st[1]+Math.sin(sa)*sr,
+      c:crystal[Math.floor(Math.random()*crystal.length)], d:Math.random()*.7, col:Math.random()<.6?ink:violet, sz:(Math.random()<.1?3:1.8)*dpr};
+  });
+  const t0=performance.now(); let skipped=false, ended=false, last=t0;
+  const end=()=>{ if(ended) return; ended=true; stage.onclick=null; finish(); };
+  stage.onclick=()=>{skipped=true;};
+  setTimeout(end, 6000); // 保險：動畫被暫停或掉格時，結果照樣出現
+  function frame(now){
+    if(!cv.isConnected||ended) return;
+    const t=(now-t0)/1000, f=Math.min(4,(now-last)/16.67); last=now; // f：相對 60fps 的格數，慢機也收斂
+    if(skipped||t>5.4) return end();
+    ctx.clearRect(0,0,W,H);
+    // 星線（墨色虛線）與星點（紫色實心，不發光）
+    if(t>1.3&&t<3.6){
+      const k=Math.min(1,(t-1.3)/1.2), fade=t>3.1?1-(t-3.1)/.5:1, n=stars.length, segs=(n-1)*k;
+      ctx.strokeStyle=`rgba(28,26,31,${.8*fade})`;ctx.lineWidth=1.6*dpr;ctx.setLineDash([4*dpr,5*dpr]);ctx.beginPath();
+      for(let i=0;i<n-1&&i<segs;i++){const q=Math.min(1,segs-i),[x1,y1]=stars[i],[x2,y2]=stars[i+1];ctx.moveTo(x1,y1);ctx.lineTo(x1+(x2-x1)*q,y1+(y2-y1)*q);}
+      ctx.stroke();ctx.setLineDash([]);
+      for(const [x,y] of stars){ctx.fillStyle=`rgba(110,59,255,${fade})`;ctx.beginPath();ctx.arc(x,y,W*.016,0,6.283);ctx.fill();
+        ctx.strokeStyle=`rgba(28,26,31,${fade})`;ctx.lineWidth=1.4*dpr;ctx.beginPath();ctx.arc(x,y,W*.03,0,6.283);ctx.stroke();}
+    }
+    const toCrystal=t>3.1, burst=t>3.1&&t<3.45, alpha=t>4.4?Math.max(0,1-(t-4.4)/.9):1;
+    if(t>4.3) stage.classList.remove("forming");
+    for(const p of P){
+      let tx,ty,k;
+      if(!toCrystal){ tx=p.sx; ty=p.sy; k=t>p.d?.06:0; }
+      else { tx=p.c[0]; ty=p.c[1]; k=burst?0:.075; }
+      if(burst){ p.vx+=((p.x-cx)*.004+(Math.random()-.5)*2*dpr)*f; p.vy+=((p.y-cy)*.004+(Math.random()-.5)*2*dpr)*f; }
+      const damp=Math.pow(.82,f);
+      p.vx=(p.vx+(tx-p.x)*k*f)*damp; p.vy=(p.vy+(ty-p.y)*k*f)*damp;
+      p.x+=p.vx*f; p.y+=p.vy*f;
+      const cm=toCrystal?Math.min(1,(t-3.1)/.9):0, col=mix(p.col,stoneRgb,cm);
+      ctx.fillStyle=`rgba(${col.map(Math.round).join(",")},${alpha*(.7+.3*Math.sin(now/180+p.d*40))})`;
+      ctx.fillRect(p.x,p.y,p.sz,p.sz);
+    }
+    requestAnimationFrame(frame);
+  }
+  requestAnimationFrame(frame);
+}
+
+function stampSvg(){
+  return `<svg class="stamp" viewBox="0 0 120 120" aria-hidden="true"><circle cx="60" cy="60" r="54" fill="none" stroke="currentColor" stroke-width="4"/><circle cx="60" cy="60" r="44" fill="none" stroke="currentColor" stroke-width="1.5"/><text x="60" y="71" text-anchor="middle" font-family="Noto Serif TC,serif" font-weight="900" font-size="30" fill="currentColor">共生礦</text></svg>`;
+}
+
+function render(r, animate){
+  const out=$("out"), day=r.cols[2].gan;
+  let d=0; const nx=step=>`style="--d:${(d+=step).toFixed(2)}s"`;
+  out.innerHTML = `
+    ${animate?"":'<p class="mono" style="margin:0">範例：西元 1998 年 6 月 20 日 08:15</p>'}
+    <div class="sheet anim">
+      <div class="rule mono after" ${nx(0)}><span>你的誕生星圖</span><span>CAT. SO-${[...r.cols.map(c=>c.gan+c.zhi).join("")].reduce((h,c)=>(h*31+c.charCodeAt(0))%900,7)+100}</span></div>
+      <div class="stage forming" role="img" aria-label="你的誕生星圖凝結成${esc(r.main[0])}">
+        ${dialSvg()}
+        <div id="stone" class="photo"></div>
+        <canvas id="stage" aria-hidden="true"></canvas>
+        <button class="skip" type="button">略過動畫</button>
+      </div>
+      <h2 class="huge stone-name after" ${nx(.1)}>${r.main[0]}</h2>
+      <p class="small after" ${nx(.12)}><span class="mono">你的本命水晶｜</span>${STONE_DESC[r.main[0]]}</p>
+      <p class="small after" ${nx(.15)}>你的星圖屬於<b>「${PERSONA[day]}」</b>型。這類星圖的人，常被形容${PERSONA_DESC[day]}</p>
+      <div class="after" ${nx(.15)}>
+        <h3 class="huge guard-h">${PERSONA[day]}型的守護石</h3>
+        <p class="mono" style="margin:4px 0 10px;font-size:16px">陪「${PERSONA[day]}」型的你，跟本命水晶搭在一起戴</p>
+        <div class="guards">${r.guards.map(g=>`
+          <div class="guard"><div class="photo" data-n="${g[0]}"></div><p><b>${g[0]}</b><br>象徵${g[2]}</p></div>`).join("")}</div>
+      </div>
+      <div class="after" ${nx(.1)}>${stampSvg()}</div>
+      <p class="mono after" ${nx(.1)} style="margin:0;font-size:16px;color:var(--ink-2)">測測你的本命水晶 · ${SITE_URL ? esc(SITE_URL.replace(/^https?:\/\//,"")) : "@symbiosis_ore"}</p>
+    </div>
+    <div class="cta after" ${nx(.12)}>
+      <button class="ghost-btn" type="button" id="share">分享給朋友</button>
+      <button class="ghost-btn" type="button" id="shot">截圖分享</button>
+    </div>
+    <p id="shareText" class="mono" hidden style="margin:0;font-size:16px;white-space:pre-wrap;user-select:all;border:2px dashed var(--ink);padding:10px 12px"></p>
+    <p class="mono after" ${nx(.1)} style="margin:0;font-size:16px;color:var(--ink-2)">按「截圖分享」後，請用手機自己截圖，再分享到限動。</p>
+    `;
+  const play = animate && !reduce;
+  out.classList.toggle("playing", play);
+  mountPhoto($("stone"), r.main[0], r.main[0]);
+  out.querySelectorAll(".guard .photo").forEach(el=>mountPhoto(el, el.dataset.n, el.dataset.n));
+  playStage(out.querySelector(".stage"), r, play, ()=>{ out.classList.remove("playing"); $("go").disabled=false; });
+  $("share").onclick = () => {
+    const text = `我的本命水晶是${r.main[0]}，星圖屬於「${PERSONA[day]}」型。你的是哪一顆？`, url = shareUrl();
+    // 一律顯示可選取的分享文字，分享選單或剪貼簿被擋時客人還能手動複製
+    const box=$("shareText"); box.textContent=`${text}\n${url}`; box.hidden=false;
+    const copy=()=>(navigator.clipboard ? navigator.clipboard.writeText(`${text}\n${url}`) : Promise.reject())
+      .then(()=>{$("share").textContent="已複製，貼給朋友";}).catch(()=>{$("share").textContent="長按下方文字複製";});
+    if(!navigator.share) return copy();
+    navigator.share({title:"本命水晶", text, url}).catch(e=>{ if(e.name!=="AbortError") copy(); });
+  };
+  $("shot").onclick = () => {
+    document.body.classList.add("shot"); scrollTo(0,0);
+    const t=document.createElement("p"); t.className="toast"; t.textContent="請自己截圖：iPhone 按側邊鍵＋音量上，Android 按電源鍵＋音量下。截好後點一下畫面返回。"; document.body.append(t);
+    setTimeout(()=>{ t.style.opacity=0; setTimeout(()=>t.remove(),700); }, 4000);
+    setTimeout(()=>addEventListener("click", ()=>{ document.body.classList.remove("shot"); t.remove(); $("out").scrollIntoView(); }, {once:true}), 0);
+  };
+}
+
+/* ---------- 西元日期選單 ---------- */
+const opt=(v,t,sel)=>`<option value="${v}"${sel?" selected":""}>${t}</option>`;
+const THIS_YEAR=new Date().getFullYear();
+$("y").innerHTML=Array.from({length:THIS_YEAR-1901+1},(_,i)=>THIS_YEAR-i).map(v=>opt(v,v+" 年",v===1998)).join("");
+$("m").innerHTML=Array.from({length:12},(_,i)=>opt(i+1,(i+1)+" 月",i+1===6)).join("");
+$("hh").innerHTML=Array.from({length:24},(_,i)=>opt(i,String(i).padStart(2,"0")+" 時",i===8)).join("");
+$("mm").innerHTML=Array.from({length:60},(_,i)=>opt(i,String(i).padStart(2,"0")+" 分",i===15)).join("");
+function fillDays(){
+  const n=new Date(+$("y").value,+$("m").value,0).getDate(), cur=+$("d").value||20;
+  $("d").innerHTML=Array.from({length:n},(_,i)=>opt(i+1,(i+1)+" 日",i+1===Math.min(cur,n))).join("");
+}
+fillDays(); $("y").onchange=fillDays; $("m").onchange=fillDays;
+$("nohour").onchange=e=>{ $("hh").disabled=$("mm").disabled=e.target.checked; };
+
+$("f").addEventListener("submit", e => {
+  e.preventDefault();
+  const err=$("err"), noHour=$("nohour").checked;
+  const fail=msg=>{ err.textContent=msg; err.hidden=false; $("out").innerHTML=""; };
+  const y=+$("y").value, m=+$("m").value, d=+$("d").value, h=+$("hh").value, mi=+$("mm").value;
+  if(typeof Solar==="undefined") return fail("星圖資料沒有載入成功，請檢查網路後重新整理頁面。");
+  if(new Date(y,m-1,d) > new Date()) return fail("出生日期不能晚於今天。");
+  if(noHour && jieDay(y,m,d)) return fail("你生日那天的星圖剛好在變換，結果會隨出生時間不同，請填出生時間（大概的時段也可以）。");
+  err.hidden=true; $("go").disabled=!reduce;
+  render(analyze(y,m,d,noHour?12:h,noHour?0:mi,noHour), true);
+  $("out").scrollIntoView({behavior:reduce?"auto":"smooth",block:"start"});
+});
+if(typeof Solar!=="undefined") render(analyze(1998,6,20,8,15,false), false);
+</script>
+</body>
+</html>
