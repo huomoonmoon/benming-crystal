@@ -24,6 +24,9 @@
   --sans:"Noto Sans TC","PingFang TC","Microsoft JhengHei",sans-serif;
   --mono:"JetBrains Mono","Noto Sans TC",monospace;
   --ease:cubic-bezier(.16,1,.3,1);
+  /* 鐳射色：只用在點綴（框線、主字陰影、殘影、按鈕光帶）與結果卡 */
+  --holo:linear-gradient(115deg,#6E3BFF 0%,#3FA9F5 22%,#F58FD0 42%,#FFD36E 58%,#7CE0C3 74%,#6E3BFF 100%);
+  --sweep:linear-gradient(115deg,transparent 38%,rgba(255,255,255,.55) 47%,rgba(245,143,208,.22) 50%,rgba(63,169,245,.2) 53%,transparent 62%);
 }
 *{box-sizing:border-box}
 html{background:var(--paper)}
@@ -34,26 +37,32 @@ body::before{content:"";position:fixed;inset:-20%;pointer-events:none;z-index:50
   background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .1 0 0 0 0 .09 0 0 0 0 .12 0 0 0 .55 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")}
 .wrap{max-width:640px;margin:0 auto;display:grid;grid-template-columns:minmax(0,1fr);gap:40px}
 .mono{font:500 16px/1.6 var(--mono);letter-spacing:.02em}
-.rule{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;border-block:2px solid var(--ink);padding-block:6px}
+.rule{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;border-block:2px solid var(--ink);border-image:var(--holo) 1;padding-block:6px}
 
 /* 巨大明體：只給主字與石名；紫色套印偏移 */
 .huge{font-family:var(--display);font-weight:900;line-height:.92;letter-spacing:-.03em;margin:0;color:var(--ink);
   text-shadow:.045em .03em 0 rgba(110,59,255,.85)}
 
 /* 封面 */
-.cover{position:relative;min-height:min(150vw,860px);padding-top:8px}
-.cover h1{font-size:clamp(104px,31vw,210px);position:relative;z-index:2}
+.cover{position:relative;min-height:min(175vw,980px);padding-top:8px;overflow-x:clip}
+.cover h1{font-size:clamp(104px,31vw,210px);position:relative;z-index:2;text-shadow:none}
+/* 主字的錯位陰影改成鐳射色：同一段字墊在後面 */
+.cover h1::before{content:"本命\A水晶？";white-space:pre;position:absolute;inset:0;z-index:-1;transform:translate(.045em,.03em);
+  background:var(--holo);-webkit-background-clip:text;background-clip:text;color:transparent}
 .cover .lede{position:absolute;left:0;bottom:0;max-width:18em;margin:0;z-index:4;background:var(--paper);padding:4px 8px 4px 0}
 .spec{position:absolute;right:0;top:12px;writing-mode:vertical-rl;z-index:4;font:500 16px var(--mono);letter-spacing:.08em;color:var(--ink)}
 .stamp{position:absolute;z-index:5;width:112px;height:112px;color:var(--violet);transform:rotate(-14deg)}
 .cover .stamp{left:4px;bottom:92px}
-.cover .photo{position:absolute;right:-6%;bottom:6%;width:74%;aspect-ratio:1;z-index:3}
+.cover .photo{position:absolute;right:-14%;bottom:4%;width:96%;aspect-ratio:1;z-index:3}
+/* 石頭後的光暈與十字閃光 */
+.cover .photo::before,.stage #stone::before{content:"";position:absolute;inset:4%;z-index:0;border-radius:50%;background:radial-gradient(circle,rgba(110,59,255,.26),rgba(63,169,245,.13) 45%,transparent 70%)}
+.spark{position:absolute;z-index:6;color:#FBFAF7;filter:drop-shadow(0 0 6px rgba(110,59,255,.9));pointer-events:none}
 
 /* 石頭照片：紫色殘影連拍 */
 .photo{position:relative;display:block}
 .photo img{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;z-index:2;filter:contrast(1.08) saturate(1.05) drop-shadow(0 0 1.5px var(--paper)) drop-shadow(0 0 1.5px var(--paper))}
 .photo .ghost{position:absolute;inset:0;-webkit-mask:var(--src) center/contain no-repeat;mask:var(--src) center/contain no-repeat}
-.photo .ghost{z-index:1;background:var(--violet)}
+.photo .ghost{z-index:1;background:var(--holo)}
 .photo .g1{transform:translate(-9%,-7%);opacity:.9}
 .photo .g2{transform:translate(-18%,-14%);opacity:.55}
 .anim .photo .g1{animation:strobe1 4.8s var(--ease) infinite}
@@ -75,7 +84,8 @@ select:hover{border-bottom-color:var(--violet)}
 select:disabled{opacity:.35}
 .check{display:flex;gap:10px;align-items:center;font:500 16px var(--mono);accent-color:var(--violet);cursor:pointer}
 .check input{width:18px;height:18px}
-.go{font:900 30px var(--display);letter-spacing:.35em;text-indent:.35em;cursor:pointer;border:0;border-radius:0;padding:14px 20px;color:var(--paper);background:var(--violet);
+.go{font:900 30px var(--display);letter-spacing:.35em;text-indent:.35em;cursor:pointer;border:0;border-radius:0;padding:14px 20px;color:var(--paper);
+  background:linear-gradient(115deg,var(--violet) 0 38%,#9A7BFF 45%,#F58FD0 49%,#FFD36E 51%,#7FC8F8 55%,var(--violet) 62%) 30% 0/260% 100%;
   box-shadow:5px 5px 0 var(--ink);transition:transform .2s var(--ease),box-shadow .2s var(--ease)}
 .go:hover{transform:translate(-2px,-2px);box-shadow:7px 7px 0 var(--ink)}
 .go:active{transform:translate(3px,3px);box-shadow:2px 2px 0 var(--ink)}
@@ -85,25 +95,31 @@ button:focus-visible,select:focus-visible,input:focus-visible,a:focus-visible{ou
 
 /* 結果：一張可截圖的小海報 */
 #out{display:grid;gap:22px;scroll-margin-top:12px}
-.sheet{position:relative;border:2px solid var(--ink);padding:18px 16px 22px;display:grid;gap:18px;background:var(--paper)}
-.sheet .stamp{right:-8px;bottom:-34px;width:96px;height:96px}
+.sheet{position:relative;border:4px solid transparent;padding:18px 16px 22px;display:grid;gap:18px;
+  background:var(--sweep) 70% 0/250% 100% padding-box,linear-gradient(var(--paper),var(--paper)) padding-box,var(--holo) border-box}
+.sheet.reveal{animation:sweep 1.6s var(--ease)}
+@keyframes sweep{from{background-position:180% 0,0 0,0 0}to{background-position:70% 0,0 0,0 0}}
+.sheet .stamp{right:-8px;bottom:-58px;width:96px;height:96px}
 .stage{position:relative;width:100%;aspect-ratio:1;cursor:pointer}
-.stage canvas,.stage svg{position:absolute;inset:0;width:100%;height:100%}
-.stage #stone{position:absolute;inset:6%;transition:opacity 1s var(--ease),transform 1s var(--ease)}
+.stage canvas,.stage .dial,.stage .constel{position:absolute;inset:0;width:100%;height:100%}
+.stage #stone{position:absolute;inset:-6%;transition:opacity 1s var(--ease),transform 1s var(--ease)}
 .dial{color:var(--ink);transition:opacity 1s var(--ease)}
 .dial .spin{animation:spin 90s linear infinite;transform-origin:0 0}
 @keyframes spin{to{transform:rotate(360deg)}}
-.stage.forming #stone{opacity:0;transform:scale(.94)}
+.stage.forming #stone,.stage.forming .spark{opacity:0;transform:scale(.94)}
+.stage .constel{transition:opacity 1s var(--ease)}
+.stage.forming .constel{opacity:0}
+.stage .spark{transition:opacity 1s var(--ease) .4s}
 .stage.forming .dial{opacity:.25}
 .skip{position:absolute;right:0;bottom:0;font:500 16px var(--mono);color:var(--ink-2);background:var(--paper);border:0;cursor:pointer;padding:4px 8px}
 .stage:not(.forming) .skip{display:none}
-.stone-name{font-size:clamp(76px,22vw,136px)}
+.stone-name{font-size:clamp(76px,22vw,136px);text-shadow:none;background:var(--holo);-webkit-background-clip:text;background-clip:text;color:transparent;filter:drop-shadow(.04em .03em 0 var(--ink))}
 .small{margin:0;font-size:17px}
 .small b{color:var(--violet)}
 .guards{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));border-top:2px solid var(--ink)}
 .guard{display:grid;justify-items:center;text-align:center;gap:6px;padding:12px 8px 0 0}
 .guard+.guard{border-left:2px solid var(--ink);padding-left:10px}
-.guard .photo{width:84px;height:84px}
+.guard .photo{width:112px;height:112px}
 .guard p{margin:0;font-size:16px;line-height:1.5}
 .guard b{font:900 26px/1.3 var(--display)}
 .guard-h{font-size:34px;margin:0}
@@ -120,7 +136,8 @@ button:focus-visible,select:focus-visible,input:focus-visible,a:focus-visible{ou
 #out.playing .after{opacity:0;transform:translateY(12px);transition:none}
 @media (prefers-reduced-motion: reduce){
   .dial .spin,.anim .photo .g1,.anim .photo .g2{animation:none}
-  .after,.stage #stone,.dial{transition:none}
+  .after,.stage #stone,.dial,.stage .spark{transition:none}
+  .sheet.reveal{animation:none}
 }
 </style>
 
@@ -132,6 +149,9 @@ button:focus-visible,select:focus-visible,input:focus-visible,a:focus-visible{ou
   <section class="cover anim">
     <h1 class="huge">本命<br>水晶？</h1>
     <div id="gem" class="photo" aria-hidden="true"></div>
+    <svg class="spark" style="width:40px;right:30%;bottom:52%" viewBox="0 0 20 20" aria-hidden="true"><path d="M10 0Q11 9 20 10Q11 11 10 20Q9 11 0 10Q9 9 10 0Z" fill="currentColor"/></svg>
+    <svg class="spark" style="width:24px;right:4%;bottom:20%" viewBox="0 0 20 20" aria-hidden="true"><path d="M10 0Q11 9 20 10Q11 11 10 20Q9 11 0 10Q9 9 10 0Z" fill="currentColor"/></svg>
+    <svg class="spark" style="width:18px;right:52%;bottom:30%" viewBox="0 0 20 20" aria-hidden="true"><path d="M10 0Q11 9 20 10Q11 11 10 20Q9 11 0 10Q9 9 10 0Z" fill="currentColor"/></svg>
     <p class="spec">CAT. SO-000 / BIRTH STAR MAP / 本命水晶測驗</p>
     <svg class="stamp" viewBox="0 0 120 120" aria-hidden="true"><circle cx="60" cy="60" r="54" fill="none" stroke="currentColor" stroke-width="4"/><circle cx="60" cy="60" r="44" fill="none" stroke="currentColor" stroke-width="1.5"/><text x="60" y="71" text-anchor="middle" font-family="Noto Serif TC,serif" font-weight="900" font-size="30" fill="currentColor">共生礦</text></svg>
     <p class="lede small">你出生的那一刻，星空排成一幅只屬於你的圖。輸入生日，看它凝結成哪一顆石頭。</p>
@@ -323,6 +343,10 @@ function dialSvg(){
   </svg>`;
 }
 
+function constelSvg(r){
+  const p=starsOf(r).map(([a,b])=>[(a*100).toFixed(1),(b*100).toFixed(1)]);
+  return `<svg class="constel" viewBox="0 0 100 100" aria-hidden="true"><polyline points="${p.map(q=>q.join(",")).join(" ")}" fill="none" stroke="rgba(28,26,31,.5)" stroke-width=".4" stroke-dasharray="1 1.2"/>${p.map(([x,y],i)=>`<circle cx="${x}" cy="${y}" r="${i%3?1.2:1.8}" fill="#6E3BFF"/>`).join("")}</svg>`;
+}
 async function playStage(stage, r, animate, done){
   const cv=stage.querySelector("#stage"), ctx=cv.getContext("2d");
   const dpr=Math.min(devicePixelRatio||1,2), W=cv.width=cv.clientWidth*dpr, H=cv.height=cv.clientHeight*dpr;
@@ -332,8 +356,8 @@ async function playStage(stage, r, animate, done){
   const img=stage.querySelector("#stone img");
   try{ await img.decode(); }catch(e){}
   const stars=starsOf(r).map(([x,y])=>[x*W,y*H]);
-  // 粒子目標：照片裡石頭本身的輪廓（不透明像素），位置與 #stone（inset 6%）一致
-  const cx=W/2, cy=H/2, box=W*.88, bx=W*.06, by=H*.06;
+  // 粒子目標：照片裡石頭本身的輪廓（不透明像素），位置與 #stone（inset -6%）一致
+  const cx=W/2, cy=H/2, box=W*1.12, bx=-W*.06, by=-H*.06;
   let crystal=[];
   try{
     const oc=document.createElement("canvas"); oc.width=W; oc.height=H; const o=oc.getContext("2d");
@@ -385,6 +409,8 @@ async function playStage(stage, r, animate, done){
   requestAnimationFrame(frame);
 }
 
+const sparkSvg = (w,pos) => `<svg class="spark" style="width:${w}px;${pos}" viewBox="0 0 20 20" aria-hidden="true"><path d="M10 0Q11 9 20 10Q11 11 10 20Q9 11 0 10Q9 9 10 0Z" fill="currentColor"/></svg>`;
+const catNo = r => [...r.cols.map(c=>c.gan+c.zhi).join("")].reduce((h,c)=>(h*31+c.charCodeAt(0))%900,7)+100;
 function stampSvg(){
   return `<svg class="stamp" viewBox="0 0 120 120" aria-hidden="true"><circle cx="60" cy="60" r="54" fill="none" stroke="currentColor" stroke-width="4"/><circle cx="60" cy="60" r="44" fill="none" stroke="currentColor" stroke-width="1.5"/><text x="60" y="71" text-anchor="middle" font-family="Noto Serif TC,serif" font-weight="900" font-size="30" fill="currentColor">共生礦</text></svg>`;
 }
@@ -400,21 +426,43 @@ async function storyImage(r, day){
     document.fonts.load('500 32px "JetBrains Mono"', "BIRTH STAR MAP @symbiosis_ore")
   ]).catch(()=>{});
   const [stone, g1, g2, logo] = await Promise.all([IMG(name), IMG(guards[0]), IMG(guards[1]), "logo-h.png"].map(loadImg));
+  const holo=(x0,y0,x1,y1)=>{ const g=x.createLinearGradient(x0,y0,x1,y1);
+    [[0,"#6E3BFF"],[.22,"#3FA9F5"],[.42,"#F58FD0"],[.58,"#FFD36E"],[.74,"#7CE0C3"],[1,"#6E3BFF"]].forEach(([o,c])=>g.addColorStop(o,c)); return g; };
+  const spark=(cx,cy,r)=>{ x.save(); x.translate(cx,cy); x.scale(r/10,r/10); x.shadowColor="rgba(110,59,255,.9)"; x.shadowBlur=14; x.fillStyle="#FBFAF7";
+    x.beginPath(); x.moveTo(0,-10); x.quadraticCurveTo(1,-1,10,0); x.quadraticCurveTo(1,1,0,10); x.quadraticCurveTo(-1,1,-10,0); x.quadraticCurveTo(-1,-1,0,-10); x.fill(); x.restore(); };
   // 紙、顆粒
   x.fillStyle="#EEEAE2"; x.fillRect(0,0,W,H);
   for(let i=0;i<26000;i++){ x.fillStyle=`rgba(28,26,31,${Math.random()*.07})`; x.fillRect(Math.random()*W,Math.random()*H,2,2); }
+  // 斜光（畫在字底下，字才清楚）與鐳射外框
+  const sw=x.createLinearGradient(0,0,W,H);
+  [[0,"rgba(255,255,255,0)"],[.36,"rgba(255,255,255,0)"],[.45,"rgba(255,255,255,.6)"],[.48,"rgba(245,143,208,.25)"],[.51,"rgba(63,169,245,.22)"],[.6,"rgba(255,255,255,0)"],[1,"rgba(255,255,255,0)"]].forEach(([o,c])=>sw.addColorStop(o,c));
+  x.fillStyle=sw; x.fillRect(0,0,W,H);
+  x.strokeStyle=holo(0,0,W,H); x.lineWidth=12; x.strokeRect(18,18,W-36,H-36);
   // 頁首：LOGO＋規格字
-  x.fillStyle=ink; x.fillRect(64,96,W-128,4); x.fillRect(64,200,W-128,4);
+  x.fillStyle=holo(64,0,W-64,0); x.fillRect(64,96,W-128,4); x.fillRect(64,200,W-128,4); x.fillStyle=ink;
   x.drawImage(logo,64,118,logo.width*64/logo.height,64);
   x.font='500 30px "JetBrains Mono", monospace'; x.textAlign="right"; x.textBaseline="middle"; x.fillText("BIRTH STAR MAP",W-64,150);
   x.textAlign="left"; x.textBaseline="alphabetic";
   x.font='500 34px "JetBrains Mono","Noto Sans TC",monospace'; x.fillText("我的本命水晶",64,290);
-  // 本命石＋兩層紫色殘影
-  const S=820, sx=(W-S)/2+50, sy=290, gh=document.createElement("canvas"); gh.width=gh.height=S;
-  const gx=gh.getContext("2d"); gx.drawImage(stone,0,0,S,S); gx.globalCompositeOperation="source-in"; gx.fillStyle=violet; gx.fillRect(0,0,S,S);
+  // 自己的星座線（星點位置跟網站星圖同一套算法）＋光暈
+  const S=820, sx=(W-S)/2+50, sy=290, mx=W/2, my=sy+S/2-20, R=430;
+  const st=starsOf(r).map(([a,b])=>[mx+(a-.5)*R*2.1,my+(b-.5)*R*2.1]);
+  x.strokeStyle="rgba(28,26,31,.45)"; x.lineWidth=2; x.setLineDash([4,12]); x.beginPath(); x.arc(mx,my,R,0,6.283); x.stroke(); x.setLineDash([]);
+  x.beginPath(); st.forEach(([a,b],i)=>i?x.lineTo(a,b):x.moveTo(a,b)); x.stroke();
+  x.fillStyle=violet; st.forEach(([a,b],i)=>{ x.beginPath(); x.arc(a,b,i%3?8:12,0,6.283); x.fill(); });
+  const hg=x.createRadialGradient(mx,my,0,mx,my,R); hg.addColorStop(0,"rgba(110,59,255,.28)"); hg.addColorStop(.45,"rgba(63,169,245,.14)"); hg.addColorStop(1,"rgba(63,169,245,0)");
+  x.fillStyle=hg; x.fillRect(mx-R,my-R,R*2,R*2);
+  // 本命石＋兩層鐳射殘影
+  const gh=document.createElement("canvas"); gh.width=gh.height=S;
+  const gx=gh.getContext("2d"); gx.drawImage(stone,0,0,S,S); gx.globalCompositeOperation="source-in";
+  const gg=gx.createLinearGradient(0,0,S,S); [[0,"#6E3BFF"],[.3,"#3FA9F5"],[.55,"#F58FD0"],[.8,"#FFD36E"],[1,"#6E3BFF"]].forEach(([o,c])=>gg.addColorStop(o,c)); gx.fillStyle=gg; gx.fillRect(0,0,S,S);
   x.globalAlpha=.4; x.drawImage(gh,sx-150,sy-70); x.globalAlpha=.85; x.drawImage(gh,sx-75,sy-35); x.globalAlpha=1; x.drawImage(stone,sx,sy,S,S);
-  // 石名（紫色套印偏移）
-  x.font='900 230px "Noto Serif TC", serif'; x.fillStyle=violet; x.fillText(name,76,1339); x.fillStyle=ink; x.fillText(name,64,1330);
+  spark(sx+S*.62,sy+90,44); spark(sx-40,sy+S*.62,28); spark(sx+S*.78,sy+S*.8,20);
+  // 卡號標籤
+  x.font='500 32px "JetBrains Mono", monospace'; const tag=`MY BIRTH STONE · No.${catNo(r)}`, tw=x.measureText(tag).width;
+  x.fillStyle=ink; x.fillRect(64,1060,tw+36,52); x.fillStyle="#EEEAE2"; x.textBaseline="middle"; x.fillText(tag,82,1087); x.textBaseline="alphabetic";
+  // 石名：鐳射字＋墨色錯位陰影
+  x.font='900 230px "Noto Serif TC", serif'; x.fillStyle=ink; x.fillText(name,76,1339); x.fillStyle=holo(64,1150,64+x.measureText(name).width,1340); x.fillText(name,64,1330); x.fillStyle=ink;
   // 兩句
   x.font='700 46px "Noto Sans TC", sans-serif'; x.fillText(`傳統上象徵${r.main[2]}`,70,1420);
   const seg=[["我的星圖是",ink],[`「${persona}」`,violet],["型",ink]]; let px=70;
@@ -425,8 +473,8 @@ async function storyImage(r, day){
   [g1,g2].forEach((img,i)=>{ const bx=64+i*360; x.drawImage(img,bx-10,1630,140,140); x.font='900 50px "Noto Serif TC", serif'; x.fillText(guards[i],bx+130,1720); });
   // 底部導流
   x.fillRect(64,1790,W-128,4);
-  x.font='500 32px "JetBrains Mono","Noto Sans TC",monospace'; x.fillText("想測你的本命水晶？到 IG 搜 @symbiosis_ore",64,1846);
-  x.fillText("→ 點主頁連結",64,1890);
+  x.font='500 32px "JetBrains Mono","Noto Sans TC",monospace'; x.fillText("想測你的本命水晶？到 IG 搜 @symbiosis_ore",64,1840);
+  x.fillText("→ 點主頁連結",64,1882);
   // 紫色圓章
   x.save(); x.translate(W-180,1668); x.rotate(-14*Math.PI/180); x.strokeStyle=x.fillStyle=violet;
   x.lineWidth=8; x.beginPath(); x.arc(0,0,104,0,6.283); x.stroke(); x.lineWidth=3; x.beginPath(); x.arc(0,0,86,0,6.283); x.stroke();
@@ -440,10 +488,11 @@ function render(r, animate){
   out.innerHTML = `
     ${animate?"":'<p class="mono" style="margin:0">範例：西元 1998 年 6 月 20 日 08:15</p>'}
     <div class="sheet anim">
-      <div class="rule mono after" ${nx(0)}><span>你的誕生星圖</span><span>CAT. SO-${[...r.cols.map(c=>c.gan+c.zhi).join("")].reduce((h,c)=>(h*31+c.charCodeAt(0))%900,7)+100}</span></div>
+      <div class="rule mono after" ${nx(0)}><span>你的誕生星圖</span><span>CAT. SO-${catNo(r)}</span></div>
       <div class="stage forming" role="img" aria-label="你的誕生星圖凝結成${esc(r.main[0])}">
-        ${dialSvg()}
+        ${dialSvg()}${constelSvg(r)}
         <div id="stone" class="photo"></div>
+        ${sparkSvg(34,"left:62%;top:8%")}${sparkSvg(22,"left:22%;top:58%")}${sparkSvg(16,"left:70%;top:74%")}
         <canvas id="stage" aria-hidden="true"></canvas>
         <button class="skip" type="button">略過動畫</button>
       </div>
@@ -477,6 +526,7 @@ function render(r, animate){
   let shareFile=null;
   playStage(out.querySelector(".stage"), r, play, ()=>{
     out.classList.remove("playing"); $("go").disabled=false;
+    if(play) out.querySelector(".sheet").classList.add("reveal"); // 石頭成形後一道光掃過卡面
     // 限動圖在背景先畫好，按分享時直接附上（iPhone 要在點擊當下叫分享，不能等畫圖）
     storyImage(r, day).then(b=>{ shareFile=window.__shareFile=new File([b],"本命水晶.png",{type:"image/png"}); }).catch(()=>{});
   });
